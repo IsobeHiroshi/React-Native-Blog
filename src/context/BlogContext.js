@@ -7,7 +7,8 @@ const blogReducer = (state, action) => {
         ...state,
         {
           id: Math.floor(Math.random() * 99999),
-          title: `Blog Post #${state.length + 1}`,
+          title: action.payload.title,
+          content: action.payload.content,
         },
       ];
     case "delete_blogPost":
@@ -18,8 +19,30 @@ const blogReducer = (state, action) => {
 };
 
 const addBlogPost = (dispatch) => {
-  return () => {
-    dispatch({ type: "add_blogPost" });
+  return (title, content, callback) => {
+    dispatch({
+      type: "add_blogPost",
+      /* Key which is identical to the value can be omitted */
+      payload: { title, content },
+    });
+    callback();
+
+    /*
+    Note: in this kind of app, it is likely to make API request.
+    In that case, it should be like this:
+
+    return async (title, content, callback) => {
+    try {
+      await axios.post("=== request URL ===", title, content)
+      dispatch({
+        type: "add_blogPost",
+        payload: { title, content },
+      });
+      callback()
+    } catch (e) {
+      === error handling ===
+    }
+    */
   };
 };
 
